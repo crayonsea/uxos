@@ -23,4 +23,4 @@ print_blank:
         dw      0xAA55
 
 
-; /home/guest/real/vga-clear.bin
+; /home/guest/uxos/trial/real/vga-clear.bin
