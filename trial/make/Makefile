@@ -1,14 +1,17 @@
 CC		:= gcc
-FLAGS	:= 
+FLAGS	:= -c
 
-mian: min.o max.o main.o
-	$(CC) $(FLAGS) main.o min.o max.o $@
+main: min.o max.o main.o
+	$(CC) main.o min.o max.o -o $@
 
 min.o: min.h min.c
-	$(CC) $(FLAGS) -c min.c
+	$(CC) $(FLAGS) -o min.o min.c
 
 max.o: max.h max.c
-	$(CC) $(FLAGS) -c max.c
+	$(CC) $(FLAGS) -o max.o max.c
+
+main.o: main.c
+	$(CC) $(FLAGS) -o main.o main.c
 
 clean:
 	@rm -f *.o
