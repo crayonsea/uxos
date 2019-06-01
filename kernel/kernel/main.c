@@ -1,4 +1,5 @@
 #include <utils/root.h>
+#include <utils/stdio.h>
 #include <dev/vga.h>
 
 int main() 
@@ -13,8 +14,16 @@ int main()
 
     vga_init();
     vga_puts("Hello\n");
-    vga_puts("Hello\n");
+    vga_puts("World\n");
+    
+    // printf test
+    printf_test();
+    putchar('@');
+    putchar('\n');
+    puts("puts:");
+    panic("--- panic test ---");
 
     while (1);
+    
     return 0;
 }
