@@ -57,7 +57,7 @@
         mov     sp, 0
 
         ;
-        ; Then, the bootsector loads kernel into 1000:0000.
+        ; Then, the bootsector loads kernel into 1000:0000 (64K physics address).
         ; The address of kernel entry is 0xC0010000.
         ; 0xC0010000 is hardcoded in scripts/Linked.ld
         ;
@@ -68,8 +68,8 @@
         mov     drive, DISK_A
         mov     track, 0
         mov     head, 0
-        mov     sector, 2            ; sector count from 1
-        mov     total_sectors, 128   ; read 128 sectors, 64K
+        mov     sector, 2            ; sector count from 1 (1 2 3 ...);  secort_1: boot_secort, secort_2: uxos.img
+        mov     total_sectors, 128   ; read 128 sectors, 64K (128 * 512Byte)
 
 read_next_sector: 
         mov     sectors, 1
@@ -158,7 +158,10 @@ init_pte:
         stosd
         mov     dword [OUTTER_PGTBL+000*4], INNER_PGTBL|PTE_WRITE|PTE_PRESENT
         mov     dword [OUTTER_PGTBL+768*4], INNER_PGTBL|PTE_WRITE|PTE_PRESENT
-
+        ; 0 ~ 4M --> 0 ~ 4M
+        ; 3G ~ 3G+4M --> 0 ~ 4M
+        ; OS: 3G+64K --> 64K
+        
         ;
         ; Load CR3
         ;
@@ -177,7 +180,7 @@ init_pte:
         ; Jump to start_kernel
         ;
         putx    '4'
-        jmp     0x08:0xC0010000
+        jmp     0x08:0xC0010000 ; 3G + 64K
 
         align   8                       
 gdt:    dw      0,0,0,0         ; dummy
