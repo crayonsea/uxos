@@ -1,6 +1,6 @@
-CC     := gcc
-CFLAGS := -c -m32 -fno-stack-protector -nostdinc -I.
-OBJS   := cpu/entry.o kernel/main.o dev/vga.o utils/stdio.o
+CC		:= gcc
+CFLAGS	:= -c -m32 -fno-stack-protector -nostdinc -I.
+OBJS	:= cpu/entry.o kernel/main.o dev/vga.o utils/stdio.o
 
 fd.img: boot.img uxos.img
 	@echo "Generate fd.img" 
