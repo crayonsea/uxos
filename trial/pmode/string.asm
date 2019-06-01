@@ -34,6 +34,7 @@ start32:
         mov     ss, ax
         mov     esp, 0x10000
 
+; ========================================================
         mov     ah, 0x0c
         mov     esi, msg
         mov     edi, 0xB8000
@@ -44,6 +45,7 @@ print_string:
         add     edi, 2
         cmp     al, 0
         jne     print_string
+; ========================================================
 
         jmp     $
 

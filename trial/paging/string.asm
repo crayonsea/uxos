@@ -99,9 +99,18 @@ init_pte:
         or      eax, CR0_PG|CR0_WP|CR0_MP
         mov     cr0, eax
 
-        mov     al, 'Z'
-        mov     ah, 0x0c
-        mov     [0xB8000], ax
+; ========================================================
+        mov     ah, 0x0c        ; set color
+        mov     esi, msg
+        mov     edi, 0xb8000
+print_string:
+        mov     al, [esi]
+        mov     [edi], ax
+        inc     esi
+        add     edi, 2
+        cmp     al, 0
+        jne     print_string
+; ========================================================
 
         jmp     $
 
@@ -123,5 +132,7 @@ gdt_desc:
         dw      23              ; gdt limit=sizeof(gdt) - 1
         dd      gdt
 
-        times 510-($-$$) db 0
+msg:
+        db "Hello world in protected mode", 0
+        times   510-($-$$) db 0
         dw      0xAA55

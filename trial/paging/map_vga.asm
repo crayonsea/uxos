@@ -39,7 +39,7 @@ wait_8042_2:
         mov     eax, cr0         
         or      eax, CR0_PE
         mov     cr0, eax
-        jmp     0x08:start32            ; CODE segment : 0x08 >> 3 = 1
+        jmp     0x08:start32
 
         [bits 32]
 start32:
@@ -51,26 +51,8 @@ start32:
         mov     ss, ax
         mov     esp, 0x10000
 
-; ====================================================
-; virtual address [0-4M] --> physical address [0-4M]
-;
-;       outer page table 0x1000 (4096)
-;         items[0] -> inner page table
-;       inner page table 0x2000
-;         items[0] -> 0~4K
-;         items[1] -> 4K~8K
-;         items[2] -> 8K~12K
-; ====================================================
-        ; Initialize inner page table
-        ; set 1024 table items
-        ;        eax = 0 | PTE_WRITE | PTE_PRESENT
-        ;        edi = inner page table base address
-        ;        for (ecx = 1024; ecx > 0; ecx --) {
-        ;            [edi] = eax
-        ;            edi = edi + 4
-        ;            eax = eax + 4K
-        ;        }
-        ;------------------------------------------
+; ----------------------------------------------------------------------------
+        ; Initialize inner page table 
         mov     eax, PTE_WRITE|PTE_PRESENT
         mov     edi, INNER_PGTBL
         mov     ecx, 1024
@@ -83,11 +65,13 @@ init_pte:
         ; Initialize outter page table
         xor     eax, eax
         mov     edi, OUTTER_PGTBL
-        mov     ecx, 1024       ; -- CLEAR ALL
+        mov     ecx, 1024
         cld
-        rep 
-        stosd                   ; -- CLEAR ALL
-        mov     dword [OUTTER_PGTBL+0*4], INNER_PGTBL|PTE_WRITE|PTE_PRESENT     ; item[0]
+        rep
+        stosd
+        mov     dword [OUTTER_PGTBL+0*4], INNER_PGTBL|PTE_WRITE|PTE_PRESENT
+        mov     dword [OUTTER_PGTBL+1*4], INNER_PGTBL|PTE_WRITE|PTE_PRESENT 
+; ----------------------------------------------------------------------------
 
         ; Load CR3
         mov     eax, OUTTER_PGTBL 
@@ -99,9 +83,13 @@ init_pte:
         or      eax, CR0_PG|CR0_WP|CR0_MP
         mov     cr0, eax
 
-        mov     al, 'Z'
+        mov     al, 'X' 
         mov     ah, 0x0c
         mov     [0xB8000], ax
+
+        mov     al, 'Y'
+        mov     ah, 0x0c
+        mov     [0x4B8002], ax 
 
         jmp     $
 
@@ -125,3 +113,4 @@ gdt_desc:
 
         times 510-($-$$) db 0
         dw      0xAA55
+
