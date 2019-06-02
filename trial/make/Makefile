@@ -1,4 +1,4 @@
-CC		:= gcc
+CC	    := gcc
 FLAGS	:= -c
 
 main: min.o max.o main.o
